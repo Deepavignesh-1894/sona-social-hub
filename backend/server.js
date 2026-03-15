@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -38,7 +39,7 @@ app.use('/api/messages', messageRoutes);
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb+srv://rockybhai1894_db_user:r7NSuuRXOdsp2LfY@cluster0.ii7lac0.mongodb.net/Sona%20Social%20Hub%20Final?retryWrites=true&w=majority')
+  .connect(process.env.MONGODB_URI || 'mongodb+srv://rockybhai1894_db_user:r7NSuuRXOdsp2LfY@cluster0.ii7lac0.mongodb.net/sona_social_hub_final?retryWrites=true&w=majority')
   .then(() => {
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
