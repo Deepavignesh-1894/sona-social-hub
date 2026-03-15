@@ -1,0 +1,45 @@
+.profile-page {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.profile-page h1 {
+  margin: 0 0 20px;
+  font-size: 1.75rem;
+  color: var(--text);
+}
+
+.profile-card {
+  padding: 24px;
+}
+
+.profile-email {
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.profile-role {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 16px;
+}
+
+.profile-pending {
+  background: var(--accent-light);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-msg {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}

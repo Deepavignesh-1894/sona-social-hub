@@ -1,0 +1,74 @@
+.groups-page {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.groups-page h1 {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+  color: var(--text);
+}
+
+.groups-sub,
+.groups-empty {
+  color: var(--text-muted);
+  margin: 0 0 24px;
+}
+
+.groups-loading {
+  text-align: center;
+  padding: 48px;
+  color: var(--text-muted);
+}
+
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.group-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.group-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.group-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.group-card-meta {
+  font-size: 0.8rem !important;
+}
+
+.group-card-link {
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.groups-form {
+  max-width: 400px;
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.groups-form .input {
+  margin-bottom: 4px;
+}
+
+.groups-form .btn {
+  margin-top: 12px;
+}
