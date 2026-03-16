@@ -21,6 +21,8 @@ export default function GroupChat({ groupId }) {
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const previousMessageCountRef = useRef(0);
+  const isUserScrollingRef = useRef(false);
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -51,9 +53,21 @@ export default function GroupChat({ groupId }) {
     return () => clearInterval(messageInterval);
   }, [groupId]);
 
+  // Only scroll to bottom when NEW messages arrive, not on every poll
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Check if new messages were added
+    if (messages.length > previousMessageCountRef.current && !isUserScrollingRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+    previousMessageCountRef.current = messages.length;
   }, [messages]);
+
+  // Track when user is scrolling
+  const handleScroll = (e) => {
+    const container = e.target;
+    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+    isUserScrollingRef.current = !isAtBottom;
+  };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -210,9 +224,22 @@ export default function GroupChat({ groupId }) {
   };
 
 
+  const formatMessageDateTime = (date) => {
+    const d = new Date(date);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[d.getMonth()];
+    const day = d.getDate();
+    const year = d.getFullYear();
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12;
+    return `${month} ${day} ${year} ${hours}:${minutes} ${ampm}`;
+  };
+
   return (
     <div className="group-chat">
-      <div className="chat-messages">
+      <div className="chat-messages" onScroll={handleScroll}>
         {messages.length === 0 ? (
           <div className="chat-empty">No messages yet. Start the conversation!</div>
         ) : (
@@ -240,7 +267,7 @@ export default function GroupChat({ groupId }) {
                   <span className="chat-author">{name}</span>
                   {role === 'admin' && <span className="chat-badge admin-badge">👑</span>}
                   {role === 'official' && <span className="chat-badge official-badge">🏛️</span>}
-                  <span className="chat-time">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                  <span className="chat-time">{formatMessageDateTime(msg.createdAt)}</span>
                   <button
                     type="button"
                     className="chat-expand-btn"

@@ -68,6 +68,9 @@
 .chat-time {
   color: var(--text-muted);
   margin-left: auto;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
 }
 
 .chat-delete {
