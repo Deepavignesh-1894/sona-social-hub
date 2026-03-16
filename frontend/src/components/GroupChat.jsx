@@ -43,6 +43,12 @@ export default function GroupChat({ groupId }) {
 
     loadMessages();
     loadOfficials();
+
+    // Poll for new messages every 2 seconds
+    const messageInterval = setInterval(loadMessages, 2000);
+
+    // Cleanup interval on component unmount or groupId change
+    return () => clearInterval(messageInterval);
   }, [groupId]);
 
   useEffect(() => {
