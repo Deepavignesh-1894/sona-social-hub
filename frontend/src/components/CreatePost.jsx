@@ -17,7 +17,7 @@ const POST_CATEGORIES = [
   { value: 'other', label: 'Other' },
 ];
 
-export default function CreatePost({ groupId, groupOfficials, onSuccess, placeholder }) {
+export default function CreatePost({ groupId, onSuccess, placeholder }) {
   const { user, canPost } = useAuth();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('other');
@@ -26,53 +26,11 @@ export default function CreatePost({ groupId, groupOfficials, onSuccess, placeho
   const [attachments, setAttachments] = useState([]);
   const [pollOptions, setPollOptions] = useState(['', '']);
   const [taggedOfficials, setTaggedOfficials] = useState([]);
-  const [mentionQuery, setMentionQuery] = useState('');
-  const [showMentions, setShowMentionDropdown] = useState(false);
-  const [officialsList, setOfficialsList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
   if (!user || !canPost()) return null;
-
-  const fetchOfficials = async (q) => {
-    if (groupId) {
-      try {
-        const list = await usersApi.groupOfficials(groupId);
-        setOfficialsList(list.filter((o) => !q || (o.displayName + ' ' + (o.officialTitle || '') + ' ' + (o.email || '')).toLowerCase().includes(q.toLowerCase())));
-      } catch (_) {
-        setOfficialsList([]);
-      }
-    } else {
-      try {
-        const list = await usersApi.officials(q || '');
-        setOfficialsList(list);
-      } catch (_) {
-        setOfficialsList([]);
-      }
-    }
-  };
-
-  const onMentionInput = (e) => {
-    const v = e.target.value;
-    setContent(v);
-    const match = v.match(/@(\w*)$/);
-    if (match) {
-      setMentionQuery(match[1]);
-      setShowMentionDropdown(true);
-      fetchOfficials(match[1]);
-    } else {
-      setShowMentions(false);
-    }
-  };
-
-  const pickOfficial = (official) => {
-    const name = official.displayName || official.officialTitle || official.email || 'Official';
-    setContent((prev) => prev.replace(/@\w*$/, '@' + name + ' '));
-    setTaggedOfficials((prev) => (prev.some((o) => o._id === official._id) ? prev : [...prev, official]));
-    setShowMentionDropdown(false);
-    setMentionQuery('');
-  };
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -165,26 +123,11 @@ export default function CreatePost({ groupId, groupOfficials, onSuccess, placeho
         </div>
         <textarea
           className="input create-post-input"
-          placeholder={placeholder || 'Share something... Use @ to tag officials'}
+          placeholder={placeholder || 'Share something...'}
           value={content}
-          onChange={onMentionInput}
-          onBlur={() => setTimeout(() => setShowMentionDropdown(false), 150)}
+          onChange={(e) => setContent(e.target.value)}
           rows={3}
         />
-        {showMentions && officialsList.length > 0 && (
-          <div className="create-post-mentions">
-            {officialsList.slice(0, 6).map((o) => (
-              <button
-                key={o._id}
-                type="button"
-                className="create-post-mention-item"
-                onClick={() => pickOfficial(o)}
-              >
-                {o.displayName || o.officialTitle || o.email}
-              </button>
-            ))}
-          </div>
-        )}
         {type === 'photo' && (
           <div className="create-post-attachments">
             {attachments.map((url, i) => (

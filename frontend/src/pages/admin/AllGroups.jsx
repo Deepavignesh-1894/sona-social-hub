@@ -27,7 +27,10 @@ export default function AllGroups() {
                 {g.description && <p className="admin-desc">{g.description}</p>}
                 <span className="admin-meta">By {g.createdBy?.email || 'Unknown'}</span>
               </div>
-              <Link to={`/app/group/${g._id}`} className="btn btn-primary">Open</Link>
+              <div className="admin-group-actions">
+                <Link to={`/app/group/${g._id}`} className="btn btn-primary">Open</Link>
+                <Link to={`/app/admin/group-activity/${g._id}`} className="btn btn-ghost">Activity</Link>
+              </div>
             </li>
           ))}
         </ul>

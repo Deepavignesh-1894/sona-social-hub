@@ -15,9 +15,11 @@ import Profile from './pages/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PendingOfficials from './pages/admin/PendingOfficials';
 import AllMembers from './pages/admin/AllMembers';
+import AllMembersDetailed from './pages/admin/AllMembersDetailed';
 import AllGroups from './pages/admin/AllGroups';
 import AllPosts from './pages/admin/AllPosts';
 import Reports from './pages/admin/Reports';
+import GroupActivity from './pages/admin/GroupActivity';
 import PostDetail from './pages/PostDetail';
 
 export default function App() {
@@ -46,7 +48,9 @@ export default function App() {
               <Route path="admin" element={<AdminDashboard />} />
               <Route path="admin/pending" element={<PendingOfficials />} />
               <Route path="admin/members" element={<AllMembers />} />
+              <Route path="admin/members-detailed" element={<AllMembersDetailed />} />
               <Route path="admin/groups" element={<AllGroups />} />
+              <Route path="admin/group-activity/:groupId" element={<GroupActivity />} />
               <Route path="admin/posts" element={<AllPosts />} />
               <Route path="admin/reports" element={<Reports />} />
               <Route path="post/:postId" element={<PostDetail />} />

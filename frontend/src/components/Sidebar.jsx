@@ -69,6 +69,21 @@ export default function Sidebar({ currentGroup, onJoinGroup }) {
         {pending && (
           <p className="sidebar-pending">⏳ Pending approval — view only</p>
         )}
+        <div className="sidebar-profile">
+          <div className="sidebar-profile-info">
+            <div className="sidebar-profile-name">
+              {user?.role === 'official' ? user?.displayName : user?.randomName || user?.displayName}
+            </div>
+            <div className="sidebar-profile-role">
+              {user?.role === 'admin' && '👑 Admin'}
+              {user?.role === 'official' && `🏛️ ${user?.officialTitle || 'Official'}`}
+              {user?.role === 'student' && '🎓 Student'}
+            </div>
+            {user?.role === 'admin' && (
+              <div className="sidebar-profile-email">{user?.email}</div>
+            )}
+          </div>
+        </div>
         <button type="button" className="theme-toggle sidebar-theme" onClick={toggle} aria-label="Toggle theme">
           {dark ? '☀️' : '🌙'}
         </button>

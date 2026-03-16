@@ -21,7 +21,10 @@ export default function AdminDashboard() {
         <div className="admin-card card">
           <h3>Members</h3>
           <p className="admin-stat">{stats.usersCount}</p>
-          <Link to="/app/admin/members" className="admin-link">View all →</Link>
+          <div className="admin-links">
+            <Link to="/app/admin/members" className="admin-link">View all →</Link>
+            <Link to="/app/admin/members-detailed" className="admin-link">Detailed view →</Link>
+          </div>
         </div>
         <div className="admin-card card">
           <h3>Groups</h3>

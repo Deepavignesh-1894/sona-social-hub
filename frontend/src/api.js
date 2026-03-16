@@ -94,5 +94,7 @@ export const admin = {
   pendingOfficials: () => request('/admin/pending-officials'),
   allPosts: () => request('/admin/all-posts'),
   allGroups: () => request('/admin/all-groups'),
+  allUsersDetailed: () => request('/admin/all-users-detailed'),
+  groupActivity: (groupId) => request(`/admin/group-activity/${groupId}`),
   banUser: (id, ban) => request(`/admin/user/${id}/ban`, { method: 'PATCH', body: JSON.stringify({ ban }) }),
 };

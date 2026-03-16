@@ -75,9 +75,8 @@ router.post('/', protect, async (req, res) => {
       replyTo: replyTo || null,
     });
     await message.save();
-    await message
-      .populate('author', 'displayName randomName email officialTitle role')
-      .populate({ path: 'replyTo', populate: { path: 'author', select: 'displayName randomName role' } });
+    await message.populate('author', 'displayName randomName email officialTitle role');
+    await message.populate({ path: 'replyTo', populate: { path: 'author', select: 'displayName randomName role' } });
     const result = {
       ...message.toObject(),
       author: message.author

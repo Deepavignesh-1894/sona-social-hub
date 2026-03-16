@@ -9,17 +9,16 @@ export default function CommentSection({ postId, onCountChange, isAdmin }) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const load = async () => {
-    try {
-      const list = await commentsApi.list(postId);
-      setComments(list);
-      onCountChange?.(list.length);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   useEffect(() => {
+    const load = async () => {
+      try {
+        const list = await commentsApi.list(postId);
+        setComments(list);
+        onCountChange?.(list.length);
+      } catch (e) {
+        console.error(e);
+      }
+    };
     load();
   }, [postId]);
 

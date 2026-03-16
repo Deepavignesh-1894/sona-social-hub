@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { messages as messagesApi, reports as reportsApi, uploadFile } from '../api';
+import { messages as messagesApi, reports as reportsApi, uploadFile, users } from '../api';
 import './GroupChat.css';
 
 const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '👏'];
@@ -13,25 +13,105 @@ export default function GroupChat({ groupId }) {
   const [replyTo, setReplyTo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reactionMenu, setReactionMenu] = useState(null);
+  const [officials, setOfficials] = useState([]);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionIndex, setMentionIndex] = useState(-1);
+  const [expandedMessages, setExpandedMessages] = useState(new Set());
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
-
-  const loadMessages = async () => {
-    try {
-      const list = await messagesApi.list(groupId);
-      setMessages(list);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const inputRef = useRef(null);
 
   useEffect(() => {
+    const loadMessages = async () => {
+      try {
+        const list = await messagesApi.list(groupId);
+        setMessages(list);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    const loadOfficials = async () => {
+      try {
+        const list = await users.groupOfficials(groupId);
+        setOfficials(list);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
     loadMessages();
+    loadOfficials();
   }, [groupId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setContent(value);
+
+    const cursorPos = e.target.selectionStart;
+    const textBeforeCursor = value.substring(0, cursorPos);
+    const atIndex = textBeforeCursor.lastIndexOf('@');
+    
+    if (atIndex !== -1 && (atIndex === 0 || textBeforeCursor[atIndex - 1] === ' ' || textBeforeCursor[atIndex - 1] === '\n')) {
+      const query = textBeforeCursor.substring(atIndex + 1);
+      if (query.length === 0 || !query.includes(' ')) {
+        setMentionQuery(query.toLowerCase());
+        setShowMentions(true);
+        setMentionIndex(-1);
+        return;
+      }
+    }
+    
+    setShowMentions(false);
+    setMentionQuery('');
+  };
+
+  const selectMention = (official) => {
+    const cursorPos = inputRef.current.selectionStart;
+    const textBeforeCursor = content.substring(0, cursorPos);
+    const atIndex = textBeforeCursor.lastIndexOf('@');
+    
+    if (atIndex !== -1) {
+      const beforeAt = content.substring(0, atIndex);
+      const afterCursor = content.substring(cursorPos);
+      const newContent = `${beforeAt}@${official.displayName}${afterCursor}`;
+      setContent(newContent);
+      setShowMentions(false);
+      
+      // Set cursor position after the mention
+      setTimeout(() => {
+        inputRef.current.focus();
+        inputRef.current.setSelectionRange(atIndex + official.displayName.length + 1, atIndex + official.displayName.length + 1);
+      }, 0);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (showMentions && officials.length > 0) {
+      const filtered = officials.filter(o => 
+        o.displayName.toLowerCase().includes(mentionQuery) ||
+        (o.officialTitle && o.officialTitle.toLowerCase().includes(mentionQuery))
+      );
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setMentionIndex(prev => prev < filtered.length - 1 ? prev + 1 : 0);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setMentionIndex(prev => prev > 0 ? prev - 1 : filtered.length - 1);
+      } else if (e.key === 'Enter' && mentionIndex >= 0) {
+        e.preventDefault();
+        selectMention(filtered[mentionIndex]);
+      } else if (e.key === 'Escape') {
+        setShowMentions(false);
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,6 +183,26 @@ export default function GroupChat({ groupId }) {
 
   const cancelReply = () => setReplyTo(null);
 
+  const toggleMessageActions = (messageId) => {
+    setExpandedMessages(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(messageId)) {
+        newSet.delete(messageId);
+      } else {
+        newSet.add(messageId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleMessageMouseEnter = () => {
+    // Could auto-expand on hover, but for now we'll use click
+  };
+
+  const handleMessageMouseLeave = () => {
+    // Could auto-collapse on mouse leave
+  };
+
 
   return (
     <div className="group-chat">
@@ -127,12 +227,25 @@ export default function GroupChat({ groupId }) {
                 key={msg._id}
                 className={`chat-message ${isOwn ? 'own' : ''} ${role === 'admin' || role === 'official' ? 'highlighted' : ''}`}
                 onClick={() => setReactionMenu(null)}
+                onMouseEnter={handleMessageMouseEnter}
+                onMouseLeave={handleMessageMouseLeave}
               >
                 <div className="chat-message-header">
                   <span className="chat-author">{name}</span>
                   {role === 'admin' && <span className="chat-badge admin-badge">👑</span>}
                   {role === 'official' && <span className="chat-badge official-badge">🏛️</span>}
                   <span className="chat-time">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                  <button
+                    type="button"
+                    className="chat-expand-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleMessageActions(msg._id);
+                    }}
+                    title="Show actions"
+                  >
+                    {expandedMessages.has(msg._id) ? '▼' : '▶'}
+                  </button>
                   {(isOwn || user?.role === 'admin') && (
                     <button
                       type="button"
@@ -185,38 +298,40 @@ export default function GroupChat({ groupId }) {
                     ))}
                   </div>
                 )}
-                <div className="chat-actions">
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startReply(msg);
-                    }}
-                  >
-                    Reply
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setReactionMenu((prev) => (prev === msg._id ? null : msg._id));
-                    }}
-                  >
-                    React
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReport(msg._id);
-                    }}
-                  >
-                    Report
-                  </button>
-                </div>
+                {expandedMessages.has(msg._id) && (
+                  <div className="chat-actions">
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startReply(msg);
+                      }}
+                    >
+                      Reply
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setReactionMenu((prev) => (prev === msg._id ? null : msg._id));
+                      }}
+                    >
+                      React
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleReport(msg._id);
+                      }}
+                    >
+                      Report
+                    </button>
+                  </div>
+                )}
                 {reactionMenu === msg._id && (
                   <div className="reaction-menu">
                     {REACTIONS.map((emoji) => (
@@ -261,14 +376,38 @@ export default function GroupChat({ groupId }) {
             </div>
           )}
           <div className="chat-form-row">
-            <input
-              type="text"
-              className="chat-input"
-              placeholder="Type a message..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              maxLength={500}
-            />
+            <div className="chat-input-container">
+              <input
+                ref={inputRef}
+                type="text"
+                className="chat-input"
+                placeholder="Type a message... @ to mention officials"
+                value={content}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                maxLength={500}
+              />
+              {showMentions && officials.length > 0 && (
+                <div className="mention-dropdown">
+                  {officials
+                    .filter(o => 
+                      o.displayName.toLowerCase().includes(mentionQuery) ||
+                      (o.officialTitle && o.officialTitle.toLowerCase().includes(mentionQuery))
+                    )
+                    .slice(0, 5)
+                    .map((official, idx) => (
+                      <div
+                        key={official._id}
+                        className={`mention-item ${idx === mentionIndex ? 'active' : ''}`}
+                        onClick={() => selectMention(official)}
+                      >
+                        <div className="mention-name">{official.displayName}</div>
+                        <div className="mention-title">{official.officialTitle}</div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
             <button
               type="button"
               className="btn btn-ghost chat-attach"

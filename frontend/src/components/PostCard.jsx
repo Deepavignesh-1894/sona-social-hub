@@ -6,16 +6,11 @@ import './PostCard.css';
 
 export default function PostCard({ post, onDelete, onRefresh, isAdmin, onOpen }) {
   const { user, canPost } = useAuth();
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(Array.isArray(post.likes) && post.likes.some((id) => id?.toString?.() === user?._id?.toString?.()));
   const [likeCount, setLikeCount] = useState(post.likeCount ?? 0);
   const [showComments, setShowComments] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
   const [pollVoted, setPollVoted] = useState(false);
-
-  useEffect(() => {
-    setLikeCount(post.likeCount ?? 0);
-    setLiked(Array.isArray(post.likes) && post.likes.some((id) => id?.toString?.() === user?._id?.toString?.()));
-  }, [post, user?._id]);
 
   const authorRole = post.author?.role;
   const authorName = post.author?.role === 'official'
@@ -40,7 +35,7 @@ export default function PostCard({ post, onDelete, onRefresh, isAdmin, onOpen })
     try {
       const list = await commentsApi.list(post._id);
       setCommentCount(list.length);
-    } catch (_) {}
+    } catch (error) {}
   };
 
   useEffect(() => {
