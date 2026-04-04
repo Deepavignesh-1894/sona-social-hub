@@ -51,6 +51,30 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    default: null,
+    select: false,
+  },
+  verificationExpires: {
+    type: Date,
+    default: null,
+    select: false,
+  },
+  passwordResetToken: {
+    type: String,
+    default: null,
+    select: false,
+  },
+  passwordResetExpires: {
+    type: Date,
+    default: null,
+    select: false,
+  },
 }, { timestamps: true });
 
 userSchema.pre('save', function (next) {

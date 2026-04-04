@@ -35,6 +35,10 @@ export const auth = {
   login: (email, password) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
   register: (body) => request('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   me: () => request('/auth/me'),
+  verifyEmail: (token) => request('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token }) }),
+  resendVerification: () => request('/auth/resend-verification', { method: 'POST' }),
+  forgotPassword: (email) => request('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (token, password) => request('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) }),
 };
 
 export const users = {
@@ -97,4 +101,19 @@ export const admin = {
   allUsersDetailed: () => request('/admin/all-users-detailed'),
   groupActivity: (groupId) => request(`/admin/group-activity/${groupId}`),
   banUser: (id, ban) => request(`/admin/user/${id}/ban`, { method: 'PATCH', body: JSON.stringify({ ban }) }),
+  
+  // New enhanced admin controls
+  deleteUser: (id) => request(`/admin/user/${id}`, { method: 'DELETE' }),
+  updateUserRole: (id, role, officialTitle) => request(`/admin/user/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role, officialTitle }) }),
+  verifyUserEmail: (id) => request(`/admin/user/${id}/verify-email`, { method: 'PATCH' }),
+  deletePost: (id) => request(`/admin/post/${id}`, { method: 'DELETE' }),
+  deleteComment: (id) => request(`/admin/comment/${id}`, { method: 'DELETE' }),
+  deleteGroup: (id) => request(`/admin/group/${id}`, { method: 'DELETE' }),
+  getUnverifiedUsers: () => request('/admin/users-unverified'),
+  getAllUsers: (page = 1, limit = 50, search = '') => request(`/admin/users?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`),
+  getStats: () => request('/admin/stats'),
+  approveOfficial: (id) => request(`/admin/approve-official/${id}`, { method: 'PATCH' }),
+  rejectOfficial: (id) => request(`/admin/reject-official/${id}`, { method: 'PATCH' }),
+  getReports: (status = 'all') => request(`/admin/reports?status=${status}`),
+  handleReport: (id, action, status) => request(`/admin/report/${id}`, { method: 'PATCH', body: JSON.stringify({ action, status }) }),
 };
