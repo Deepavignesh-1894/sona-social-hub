@@ -59,8 +59,6 @@ export default function Login() {
         </form>
         <p className="auth-footer">
           Don't have an account? <Link to="/register">Register</Link>
-          <br />
-          <Link to="/forgot-password" style={{ fontSize: '14px', marginTop: '10px', display: 'inline-block' }}>Forgot password?</Link>
         </p>
       </div>
       <Link to="/" className="auth-back">← Back to home</Link>

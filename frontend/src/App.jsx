@@ -5,9 +5,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import VerifyEmail from './pages/VerifyEmail';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
 import AppLayout from './pages/AppLayout';
 import PublicFeed from './pages/PublicFeed';
 import GroupFeed from './pages/GroupFeed';
@@ -16,7 +13,6 @@ import JoinGroup from './pages/JoinGroup';
 import CreateGroup from './pages/CreateGroup';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminUsers from './pages/admin/AdminUsers';
 import PendingOfficials from './pages/admin/PendingOfficials';
 import AllMembers from './pages/admin/AllMembers';
 import AllMembersDetailed from './pages/admin/AllMembersDetailed';
@@ -35,9 +31,6 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/app"
               element={
@@ -53,7 +46,6 @@ export default function App() {
               <Route path="create-group" element={<CreateGroup />} />
               <Route path="profile" element={<Profile />} />
               <Route path="admin" element={<AdminDashboard />} />
-              <Route path="admin/users" element={<AdminUsers />} />
               <Route path="admin/pending" element={<PendingOfficials />} />
               <Route path="admin/members" element={<AllMembers />} />
               <Route path="admin/members-detailed" element={<AllMembersDetailed />} />
