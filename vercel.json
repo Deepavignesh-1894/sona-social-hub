@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist"
@@ -14,7 +14,6 @@
       "source": "/api/(.*)",
       "destination": "https://your-render-app.onrender.com/api/$1"
     },
-    { "source": "/(.*)", "destination": "/" },
     {
       "source": "/uploads/(.*)",
       "destination": "https://your-render-app.onrender.com/uploads/$1"
