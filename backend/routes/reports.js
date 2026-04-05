@@ -27,7 +27,13 @@ router.get('/', protect, adminOnly, async (req, res) => {
   try {
     const reports = await Report.find()
       .populate('reportedBy', 'email displayName role')
-      .populate({ path: 'targetId', populate: { path: 'author', select: 'displayName email officialTitle randomName role' } })
+      .populate({ 
+        path: 'targetId', 
+        populate: [
+          { path: 'author', select: 'displayName email officialTitle randomName role' },
+          { path: 'group', select: 'name description' }
+        ]
+      })
       .sort({ createdAt: -1 })
       .lean();
     res.json(reports);

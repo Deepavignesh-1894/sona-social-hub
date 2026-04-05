@@ -9,7 +9,7 @@ export default function Landing() {
     <div className="landing">
       <header className="landing-header">
         <div className="landing-brand">
-          <span className="landing-logo">Sona Social Hub</span>
+          <span className="landing-logo">Sona Social Hub - Campus echo</span>
           <p className="landing-tagline">Sona College of Technology — Anonymous Campus Community</p>
         </div>
         <div className="landing-actions">

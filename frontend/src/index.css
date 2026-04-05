@@ -160,3 +160,159 @@ input, textarea {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .input {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .card {
+    border-radius: var(--radius-sm);
+    margin: 8px;
+  }
+  
+  /* Auth pages */
+  .auth-card {
+    margin: 16px;
+    padding: 24px;
+  }
+  
+  .auth-form {
+    gap: 12px;
+  }
+  
+  /* Feed */
+  .feed-list {
+    padding: 8px;
+  }
+  
+  .post-card {
+    margin: 0 0 16px 0;
+    padding: 16px;
+  }
+  
+  .post-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .post-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  /* Groups */
+  .groups-grid {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+  
+  .group-card {
+    margin: 0 0 16px 0;
+  }
+  
+  /* Chat */
+  .group-chat {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  }
+  
+  .chat-messages {
+    height: calc(100vh - 140px);
+    height: calc(100dvh - 140px);
+  }
+  
+  .chat-message {
+    padding: 12px;
+  }
+  
+  .chat-form {
+    padding: 12px;
+  }
+  
+  .chat-form-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .chat-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Admin */
+  .admin-page {
+    padding: 16px 8px;
+  }
+  
+  .admin-list-item {
+    padding: 16px;
+  }
+  
+  .admin-report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .admin-report-actions .btn {
+    flex: 1;
+    min-width: 100px;
+  }
+  
+  /* Modal */
+  .modal-content {
+    margin: 16px;
+    max-width: calc(100% - 32px);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+  
+  /* Navigation */
+  .nav-links {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    margin: 8px;
+    padding: 16px;
+  }
+  
+  .post-card {
+    padding: 12px;
+  }
+  
+  .chat-message {
+    padding: 8px;
+  }
+  
+  .chat-form {
+    padding: 8px;
+  }
+  
+  .admin-page {
+    padding: 8px 4px;
+  }
+  
+  .admin-report-actions .btn {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}

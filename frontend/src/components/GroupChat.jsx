@@ -303,10 +303,10 @@ export default function GroupChat({ groupId }) {
                   <div className="chat-attachments">
                     {msg.attachments.map((url) => (
                       <a key={url} href={url} target="_blank" rel="noreferrer" className="chat-attachment">
-                        {url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                        {url.match(/\.(jpg|jpeg|png)$/i) ? (
                           <img src={url} alt="attachment" />
-                        ) : url.match(/\.(mp4|webm|ogg)$/i) ? (
-                          <video src={url} controls />
+                        ) : url.match(/\.pdf$/i) ? (
+                          <span>📄 {url.split('/').pop()}</span>
                         ) : (
                           <span>{url.split('/').pop()}</span>
                         )}

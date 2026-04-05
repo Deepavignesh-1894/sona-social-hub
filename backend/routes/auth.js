@@ -4,11 +4,12 @@ import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
-const EMAIL_DOMAIN = /^[\w.-]+@sonatech\.ac\.in$/i;
+const EMAIL_DOMAIN = /[\w.-]+@sonatech\.ac\.in$/i;
 
 const genToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+// Register
 router.post('/register', async (req, res) => {
   try {
     const { email, password, displayName, role, officialTitle } = req.body;
@@ -22,7 +23,9 @@ router.post('/register', async (req, res) => {
     if (existing) {
       return res.status(400).json({ message: 'Email already registered' });
     }
+
     const userRole = role === 'official' ? 'official' : 'student';
+
     const user = await User.create({
       email: email.toLowerCase(),
       password,
@@ -30,6 +33,7 @@ router.post('/register', async (req, res) => {
       role: userRole,
       officialTitle: userRole === 'official' ? (officialTitle || '') : '',
     });
+
     const token = genToken(user._id);
     const u = await User.findById(user._id).select('-password');
     res.status(201).json({ token, user: u });
@@ -38,6 +42,7 @@ router.post('/register', async (req, res) => {
     else res.status(500).json({ message: e.message || 'Registration failed' });
   }
 });
+
 
 router.post('/login', async (req, res) => {
   try {
@@ -49,6 +54,7 @@ router.post('/login', async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+
     const token = genToken(user._id);
     const u = await User.findById(user._id).select('-password');
     res.json({ token, user: u });

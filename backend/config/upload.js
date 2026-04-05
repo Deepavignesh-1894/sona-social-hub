@@ -17,9 +17,9 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
-  const allowedExt = ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.mp4', '.webm', '.ogg', '.pdf', '.doc', '.docx', '.txt'];
+  const allowedExt = ['.jpeg', '.jpg', '.png', '.pdf'];
   if (allowedExt.includes(ext)) cb(null, true);
-  else cb(new Error('File type not allowed'), false);
+  else cb(new Error('Only PDF, JPEG, and PNG files are allowed'), false);
 };
 
 export const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });

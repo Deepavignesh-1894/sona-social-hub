@@ -23,6 +23,12 @@ export default function Register() {
   const { dark, toggle } = useTheme();
   const navigate = useNavigate();
 
+  // Email verification states
+  const [showVerification, setShowVerification] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [otp, setOtp] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -39,15 +45,94 @@ export default function Register() {
         role,
         officialTitle: role === 'official' ? officialTitle : undefined,
       });
-      
-      localStorage.setItem('token', result.token);
-      window.location.href = '/app';
+
+      if (result.requiresVerification) {
+        setUserId(result.userId);
+        setShowVerification(true);
+      } else {
+        // If no verification required (backward compatibility), login immediately
+        localStorage.setItem('token', result.token);
+        window.location.href = '/app';
+      }
     } catch (err) {
       setError(err.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
+
+  const handleVerifyEmail = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (!otp || otp.length !== 6) {
+      setError('Please enter a valid 6-digit OTP');
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await auth.verifyEmail(userId, otp);
+      localStorage.setItem('token', result.token);
+      window.location.href = '/app';
+    } catch (err) {
+      setError(err.message || 'Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setError('');
+    setResendLoading(true);
+    try {
+      await auth.resendOtp(userId);
+      alert('OTP resent! Please check your email.');
+    } catch (err) {
+      setError(err.message || 'Failed to resend OTP');
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  if (showVerification) {
+    return (
+      <div className="auth-page">
+        <button type="button" className="theme-toggle auth-theme" onClick={toggle} aria-label="Toggle theme">
+          {dark ? '☀️' : '🌙'}
+        </button>
+        <div className="auth-card card">
+          <h1>Verify Your Email</h1>
+          <p className="auth-sub">Enter the 6-digit OTP sent to {email}</p>
+          <form onSubmit={handleVerifyEmail} className="auth-form">
+            {error && <div className="auth-error">{error}</div>}
+            <input
+              type="text"
+              className="input"
+              placeholder="Enter 6-digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              maxLength={6}
+              required
+            />
+            <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
+              {loading ? 'Verifying…' : 'Verify Email'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={handleResendOtp}
+              disabled={resendLoading}
+            >
+              {resendLoading ? 'Sending…' : 'Resend OTP'}
+            </button>
+          </form>
+          <p className="auth-footer">
+            Already verified? <Link to="/login">Log in</Link>
+          </p>
+        </div>
+        <Link to="/" className="auth-back">← Back to home</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page">

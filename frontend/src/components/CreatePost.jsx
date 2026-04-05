@@ -144,7 +144,7 @@ export default function CreatePost({ groupId, onSuccess, placeholder }) {
             >
               {uploading ? 'Uploading…' : '+ Photo'}
             </button>
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+            <input ref={fileInputRef} type="file" accept="image/jpeg,image/jpg,image/png" onChange={handleFile} style={{ display: 'none' }} />
           </div>
         )}
         {type === 'poll' && (
